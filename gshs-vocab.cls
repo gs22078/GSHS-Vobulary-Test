@@ -14,6 +14,9 @@
 \RequirePackage{stackengine}
 \RequirePackage{fancyhdr}
 \RequirePackage{tcolorbox}
+\RequirePackage{textcomp}
+\RequirePackage{multicol}
+\RequirePackage[T1]{fontenc}
 \RequirePackage[a4paper,left=30mm,right=30mm,top=28mm,bottom=20mm,headheight=14pt]{geometry}
 \renewcommand\day{0}
 \renewcommand\u[1]{\stackengine{0pt}{\underline{\qquad\qquad\qquad\vphantom{#1}}}{#1}{O}{c}{F}{F}{L}}
@@ -22,8 +25,7 @@
 %\pagestyle{fancy}
 \fancypagestyle{test}{%
 \renewcommand{\headrulewidth}{0pt}
-\fancyhf{}
-\fancyhead[C]{\large 경기과고 영어 단어 시험}
+\fancyhf{}\fancyhead[C]{\large 경기과고 영어 단어 시험}
 \fancyhead[R]{이름:~\u{}}
 \fancyfoot[C]{\thepage}
 }
@@ -61,15 +63,24 @@
 \seq_new:N \l_ppkorsen_seq
 \int_new:N \l_ppdiff_int
 \seq_new:N \l_study_seq
+\tl_new:N \l_rangein_tl
+\tl_new:N \l_pitems_tl
+\tl_new:N \l_items_tl
 \tl_new:N \l_my_tl
 \tl_new:N \l_en_tl
 \tl_new:N \l_word_tl
 \tl_new:N \l_start_tl
 \tl_new:N \l_end_tl
+\int_new:N \l_taskno_int
+\int_new:N \l_tnum_int
+\int_new:N \l_tempnum_int
 \clist_new:N \l_colorlist_clist
 \clist_set:Nn \l_colorlist_clist {ForestGreen, RoyalBlue, Magenta}
 \clist_new:N \l_study_clist
 \clist_new:N \l_exam_clist
+\clist_new:N \l_one_clist
+\clist_new:N \l_two_clist
+\clist_new:N \l_three_clist
 \clist_new:N \l_range_clist
 \clist_new:N \g_rangelist_clist
 \int_new:N \l_day_int
@@ -154,18 +165,20 @@
 	}
 }
 \NewDocumentCommand{\test}{ O{} } {%
-\pagestyle{fancy}
+\thispagestyle{test}
 	\clist_gclear:N \g_rangelist_clist
 	\fn_range:n {#1}
 	\clist_set_eq:NN \l_test_clist \g_rangelist_clist
 	\clist_if_empty:NTF \l_test_clist
 	{
 		\seq_set_eq:NN \l_my_seq \l_vocab_seq
+		\raisebox{2em}{\small 범위:~Day~전체(21-28,~39-50)}\vspace*{-2em}
 	}
 	{
 		\clist_map_inline:Nn \l_test_clist {
 			\fn_pushday:n {##1}
 		}
+		\raisebox{2em}{\small 범위:~Day~#1 }\vspace*{-2em}
 	}
 \int_set:Nn \l_pdiff_int {0}
 \int_set:Nn \l_ppdiff_int {0}
@@ -250,11 +263,10 @@
 \seq_set_from_clist:Nn \l_three_seq {1,2,3,4,5,6,7,8}
 \seq_shuffle:N \l_three_seq
 
-\thispagestyle{test}
 \begin{enumerate}
 	\bfseries
 	\item[\cfbox{Task~1}] Fill~in~the~blanks~by~choosing~the~English~word~from~the~box~that~matches~its~Korean~meaning.
-\end{enumerate}\vspace{-\topsep}
+\end{enumerate}
 \fbox{\begin{tabular}{p{.3\textwidth}p{.3\textwidth}p{.3\textwidth}}
 	\tl_use:N \l_tablines_tl
 \end{tabular}}
@@ -264,7 +276,7 @@
 \begin{enumerate}
 	\bfseries
 	\item[\cfbox{Task~2}] Choose~the~best~word~to~complete~each~sentence.~(Change~the~form~if~needed.)
-\end{enumerate}\vspace{-\topsep}
+\end{enumerate}
 \fbox{\begin{tabular}{p{.3\textwidth}p{.3\textwidth}p{.3\textwidth}}
 	\tl_use:N \l_ptablines_tl
 \end{tabular}}\smallskip\par
@@ -275,7 +287,7 @@
 \begin{enumerate}
 	\bfseries
 	\item[\cfbox{Task~3}] Write~down~the~best~word~to~complete~each~sentence,~starting~with~the~given~letter.
-\end{enumerate}\vspace{-\topsep}
+\end{enumerate}
 *형태~변형~\int_use:N \l_ppdiff_int 개.~(대소문자~구별~제외)
 \begin{enumerate}[label=(\arabic*),itemsep=0pt,leftmargin=*,align=left]
 \int_step_inline:nn { 8 } { \item \seq_item:Nn \l_ppensen_seq {\seq_item:Nn \l_three_seq { ##1 }}\newline\seq_item:Nn \l_ppkorsen_seq {\seq_item:Nn \l_three_seq { ##1 }}}
@@ -285,7 +297,7 @@
 \begin{enumerate}
 	\bfseries
 	\item[\cfbox{Task~1}] Fill~in~the~blanks~by~choosing~the~English~word~from~the~box~that~matches~its~Korean~meaning.
-\end{enumerate}\vspace{-\topsep}
+\end{enumerate}
 \fbox{\begin{tabular}{p{.3\textwidth}p{.3\textwidth}p{.3\textwidth}}
 		\tl_use:N \l_tablines_tl
 \end{tabular}}
@@ -295,7 +307,7 @@
 \begin{enumerate}
 	\bfseries
 	\item[\cfbox{Task~2}] Choose~the~best~word~to~complete~each~sentence.~(Change~the~form~if~needed.)
-\end{enumerate}\vspace{-\topsep}
+\end{enumerate}
 \fbox{\begin{tabular}{p{.3\textwidth}p{.3\textwidth}p{.3\textwidth}}
 	\tl_use:N \l_ptablines_tl
 \end{tabular}}\smallskip\par
@@ -306,9 +318,218 @@
 \begin{enumerate}
 	\bfseries
 	\item[\cfbox{Task~3}] Write~down~the~best~word~to~complete~each~sentence,~starting~with~the~given~letter.
-\end{enumerate}\vspace{-\topsep}
+\end{enumerate}
 *형태~변형~\int_use:N \l_ppdiff_int 개.~(대소문자~구별~제외)
 \begin{enumerate}[label=(\arabic*),itemsep=0pt,leftmargin=*,align=left]
 \int_step_inline:nn { 8 } { \item \seq_item:Nn \l_ppensenans_seq {\seq_item:Nn \l_three_seq { ##1 }}\\\seq_item:Nn \l_ppkorsen_seq {\seq_item:Nn \l_three_seq { ##1 }}}
 \end{enumerate}
+}
+\keys_define:nn { taskprob }
+{
+	task .int_set:N = \l_taskno_int,
+	task .initial:n = 3,
+    day .tl_set:N = \l_rangein_tl,
+	day .initial:n = {},
+    num .int_set:N = \l_tempnum_int,
+	num .initial:n = 20,
+}
+\NewDocumentCommand{\task}{ O{} } {%
+\thispagestyle{test}
+	\clist_gclear:N \g_rangelist_clist
+	\keys_set:nn { taskprob } { #1 }
+	\fn_range:n {\l_rangein_tl}
+	\clist_set_eq:NN \l_test_clist \g_rangelist_clist
+	\clist_if_empty:NTF \l_test_clist
+	{
+		\seq_set_eq:NN \l_my_seq \l_vocab_seq
+		\raisebox{2em}{\small 범위:~Day~전체(21-28,~39-50)}\vspace*{-2em}
+	}
+	{
+		\clist_map_inline:Nn \l_test_clist {
+			\fn_pushday:n {##1}
+		}
+		\raisebox{2em}{\small 범위:~Day~\l_rangein_tl }\vspace*{-2em}
+	}
+	\int_compare:nNnTF {\seq_count:N \l_my_seq} < {\l_tempnum_int} {\int_set:Nn \l_tnum_int {\seq_count:N \l_my_seq}} {\int_set:Nn \l_tnum_int {\l_tempnum_int}}
+\int_set:Nn \l_pdiff_int {0}
+\int_set:Nn \l_ppdiff_int {0}
+\seq_shuffle:N \l_my_seq
+
+\seq_clear:N \l_en_seq
+\seq_clear:N \l_kor_seq
+\seq_clear:N \l_pen_seq
+\seq_clear:N \l_pensenans_seq
+\seq_clear:N \l_pensen_seq
+\seq_clear:N \l_pkorsen_seq
+\clist_clear:N \l_one_clist
+\clist_clear:N \l_two_clist
+\clist_clear:N \l_three_clist
+
+\int_case:nnT {\l_taskno_int}
+{
+	{1} {
+\int_set:Nn \l_tmpa_int { 0 }
+\int_do_while:nn { \l_tmpa_int < \l_tnum_int }
+{
+	\int_incr:N \l_tmpa_int
+	\seq_pop_left:NN {\l_my_seq} {\l_my_tl}
+	\tl_set_eq:NN \l_en_tl \l_my_tl
+	\regex_replace_once:nnN { (.*?)/(.*?)/(.*?)/(.*) } { \1 } \l_en_tl
+	\regex_replace_once:nnN { (.*?)/(.*?)/(.*?)/(.*) } { \2 } \l_my_tl
+	\seq_push:Nx \l_en_seq \l_en_tl
+	\seq_push:Nx \l_kor_seq \l_my_tl
+}
+\int_step_inline:nnn {1} {\l_tnum_int} {
+	\clist_push:Nn \l_one_clist {##1}
+}
+\seq_set_from_clist:NN \l_one_seq \l_one_clist
+\seq_shuffle:N \l_one_seq
+\begin{enumerate}
+	\bfseries
+	\item[\cfbox{Task~1}] Fill~in~the~blanks~by~choosing~the~English~word~from~the~box~that~matches~its~Korean~meaning.
+\end{enumerate}
+\fbox{\begin{minipage}{\textwidth}\begin{multicols}{3}\begin{itemize}[label={}]
+\seq_map_inline:Nn \l_en_seq { \item ##1 }
+\end{itemize}\end{multicols}\vspace*{-0.8em}\end{minipage}}\smallskip\par
+\begin{enumerate}[label=(\arabic*),itemsep=0pt,leftmargin=*,align=left]
+\int_step_inline:nn { \l_tnum_int } { \item \seq_item:Nn \l_kor_seq {\seq_item:Nn \l_one_seq { ##1 }}:\quad\u{} }
+\end{enumerate}
+\newpage
+\thispagestyle{answer}
+\begin{enumerate}
+	\bfseries
+	\item[\cfbox{Task~1}] Fill~in~the~blanks~by~choosing~the~English~word~from~the~box~that~matches~its~Korean~meaning.
+\end{enumerate}
+\fbox{\begin{minipage}{\textwidth}\begin{multicols}{3}\begin{itemize}[label={}]
+\seq_map_inline:Nn \l_en_seq { \item ##1 }
+\end{itemize}\end{multicols}\vspace*{-0.8em}\end{minipage}}\smallskip\par
+\begin{enumerate}[label=(\arabic*),itemsep=0pt,leftmargin=*,align=left]
+\int_step_inline:nn { \l_tnum_int } { \item \seq_item:Nn \l_kor_seq {\seq_item:Nn \l_one_seq {##1}}: \quad\u{\textcolor{red}{\seq_item:Nn \l_en_seq {\seq_item:Nn \l_one_seq{##1}}}} }
+\end{enumerate}
+\newpage
+	}
+
+
+
+	{2} {
+\int_set:Nn \l_tmpa_int {0}
+\int_do_while:nn { \l_tmpa_int < \l_tnum_int }
+{
+	\int_incr:N \l_tmpa_int
+	\seq_pop_left:NN {\l_my_seq} {\l_my_tl}
+	\tl_set_eq:NN \l_en_tl \l_my_tl
+	\tl_set_eq:NN \l_kor_tl \l_my_tl
+	\tl_set_eq:NN \l_ensen_tl \l_my_tl
+	\tl_set_eq:NN \l_korsen_tl \l_my_tl
+	\regex_replace_once:nnN { (.*?)/(.*?)/(.*?)/(.*) } { \1 } \l_en_tl
+	\regex_replace_once:nnN { (.*?)/(.*?)/(.*?)/(.*) } { \2 } \l_kor_tl
+	\regex_replace_once:nnN { (.*?)/(.*?)/(.*?)/(.*) } { \3 } \l_ensen_tl
+	\regex_replace_once:nnN { (.*?)/(.*?)/(.*?)/(.*) } { \4 } \l_korsen_tl
+	\tl_set_eq:NN \l_ensenprob_tl \l_ensen_tl
+	\tl_set_eq:NN \l_enword_tl \l_ensen_tl
+	\regex_replace_once:nnN { \(\w+\) } { \c{u} \cB{ \cE} } \l_ensenprob_tl
+	\regex_replace_once:nnN { \((\w+)\) } { \c{u} \cB{ \c{textcolor} \cB{ red \cE} \cB{ \1 \cE} \cE} } \l_ensen_tl
+	\regex_replace_once:nnN { .*\((\w+)\).* } { \1 } \l_enword_tl
+	\tl_set_eq:NN \l_denword_tl \l_enword_tl
+	\tl_set_eq:NN \l_den_tl \l_en_tl
+	\regex_replace_once:nnN { \w } { } \l_denword_tl
+	\regex_replace_once:nnN { \w } { } \l_den_tl
+	\tl_if_eq:NNTF \l_denword_tl \l_den_tl { } { \int_incr:N \l_pdiff_int }
+	\seq_push:No \l_pen_seq \l_en_tl
+	\seq_push:No \l_pensenans_seq \l_ensen_tl
+	\seq_push:No \l_pensen_seq \l_ensenprob_tl
+	\seq_push:Nx \l_pkorsen_seq \l_korsen_tl
+}
+\int_step_inline:nnn {1} {\l_tnum_int} {
+	\clist_push:Nn \l_two_clist {##1}
+}
+\seq_set_from_clist:NN \l_two_seq \l_two_clist
+\seq_shuffle:N \l_two_seq
+\thispagestyle{test}
+\begin{enumerate}
+	\bfseries
+	\item[\cfbox{Task~2}] Choose~the~best~word~to~complete~each~sentence.~(Change~the~form~if~needed.)
+\end{enumerate}
+\fbox{\begin{minipage}{\textwidth}\begin{multicols}{3}\begin{itemize}[label={}]
+\seq_map_inline:Nn \l_pen_seq { \item ##1 }
+\end{itemize}\end{multicols}\vspace*{-0.8em}\end{minipage}}\smallskip\par
+*단어~중복~활용~불가능,~형태~변형~\int_use:N \l_pdiff_int 개.~(대소문자~구별~제외)
+\begin{enumerate}[label=(\arabic*),itemsep=0pt,leftmargin=*,align=left]
+\int_step_inline:nn { \l_tnum_int } { \item \seq_item:Nn \l_pensen_seq {\seq_item:Nn \l_two_seq { ##1 }}}
+\end{enumerate}
+\newpage
+\thispagestyle{answer}
+\begin{enumerate}
+	\bfseries
+	\item[\cfbox{Task~2}] Choose~the~best~word~to~complete~each~sentence.~(Change~the~form~if~needed.)
+\end{enumerate}
+\fbox{\begin{minipage}{\textwidth}\begin{multicols}{3}\begin{itemize}[label={}]
+\seq_map_inline:Nn \l_pen_seq { \item ##1 }
+\end{itemize}\end{multicols}\vspace*{-0.8em}\end{minipage}}\smallskip\par
+*단어~중복~활용~불가능,~형태~변형~\int_use:N \l_pdiff_int 개.~(대소문자~구별~제외)
+\begin{enumerate}[label=(\arabic*),itemsep=0pt,leftmargin=*,align=left]
+\int_step_inline:nn { \l_tnum_int } { \item \seq_item:Nn \l_pensenans_seq {\seq_item:Nn \l_two_seq { ##1 }}\\\textcolor{red}{\seq_item:Nn \l_pkorsen_seq {\seq_item:Nn \l_two_seq { ##1 }}}}
+\end{enumerate}
+\newpage
+	}
+
+
+
+	{3} {
+\int_set:Nn \l_tmpa_int {0}
+\int_do_while:nn { \l_tmpa_int < \l_tnum_int }
+{
+	\int_incr:N \l_tmpa_int
+	\seq_pop_left:NN {\l_my_seq} {\l_my_tl}
+	\tl_set_eq:NN \l_en_tl \l_my_tl
+	\tl_set_eq:NN \l_kor_tl \l_my_tl
+	\tl_set_eq:NN \l_ensen_tl \l_my_tl
+	\tl_set_eq:NN \l_korsen_tl \l_my_tl
+	\regex_replace_once:nnN { (.*?)/(.*?)/(.*?)/(.*) } { \1 } \l_en_tl
+	\regex_replace_once:nnN { (.*?)/(.*?)/(.*?)/(.*) } { \2 } \l_kor_tl
+	\regex_replace_once:nnN { (.*?)/(.*?)/(.*?)/(.*) } { \3 } \l_ensen_tl
+	\regex_replace_once:nnN { (.*?)/(.*?)/(.*?)/(.*) } { \4 } \l_korsen_tl
+	\tl_set_eq:NN \l_ensenprob_tl \l_ensen_tl
+	\tl_set_eq:NN \l_enword_tl \l_ensen_tl
+	\regex_replace_once:nnN { \((\w)\w+\) } { \c{un} \cB{ \1 \cE} } \l_ensenprob_tl
+	\regex_replace_once:nnN { \((\w)(\w+)\) } { \c{un} \cB{ \1 \c{textcolor} \cB{ red \cE} \cB{ \2 \cE} \cE} } \l_ensen_tl
+	\regex_replace_once:nnN { .*\((\w+)\).* } { \1 } \l_enword_tl
+	\tl_set_eq:NN \l_denword_tl \l_enword_tl
+	\tl_set_eq:NN \l_den_tl \l_en_tl
+	\regex_replace_once:nnN { \w } { } \l_denword_tl
+	\regex_replace_once:nnN { \w } { } \l_den_tl
+	\tl_if_eq:NNTF \l_denword_tl \l_den_tl { } { \int_incr:N \l_ppdiff_int }
+	\seq_push:No \l_ppensenans_seq \l_ensen_tl
+	\seq_push:No \l_ppensen_seq \l_ensenprob_tl
+	\seq_push:Nx \l_ppkorsen_seq \l_korsen_tl
+}
+\int_step_inline:nnn {1} {\l_tnum_int} {
+	\clist_push:Nn \l_three_clist {##1}
+}
+\seq_set_from_clist:NN \l_three_seq \l_three_clist
+\seq_shuffle:N \l_three_seq
+
+\thispagestyle{test}
+\begin{enumerate}
+	\bfseries
+	\item[\cfbox{Task~3}] Write~down~the~best~word~to~complete~each~sentence,~starting~with~the~given~letter.
+\end{enumerate}
+*형태~변형~\int_use:N \l_ppdiff_int 개.~(대소문자~구별~제외)
+\begin{enumerate}[label=(\arabic*),itemsep=0pt,leftmargin=*,align=left]
+\int_step_inline:nn { \l_tnum_int } { \item \seq_item:Nn \l_ppensen_seq {\seq_item:Nn \l_three_seq { ##1 }}\newline\seq_item:Nn \l_ppkorsen_seq {\seq_item:Nn \l_three_seq { ##1 }}}
+\end{enumerate}
+\newpage
+\thispagestyle{answer}
+\begin{enumerate}
+	\bfseries
+	\item[\cfbox{Task~3}] Write~down~the~best~word~to~complete~each~sentence,~starting~with~the~given~letter.
+\end{enumerate}
+*형태~변형~\int_use:N \l_ppdiff_int 개.~(대소문자~구별~제외)
+\begin{enumerate}[label=(\arabic*),itemsep=0pt,leftmargin=*,align=left]
+\int_step_inline:nn { \l_tnum_int } { \item \seq_item:Nn \l_ppensenans_seq {\seq_item:Nn \l_three_seq { ##1 }}\\\seq_item:Nn \l_ppkorsen_seq {\seq_item:Nn \l_three_seq { ##1 }}}
+\end{enumerate}
+\newpage
+	}
+}
+
 }
